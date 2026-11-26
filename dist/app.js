@@ -452,7 +452,11 @@ function renderTimeline(data, filter) {
 }
 
 function updateNav() {
-  const section = ['#demo-film', '#review', '#study'].includes(location.hash)
+  if (location.hash === '#demo-film') {
+    location.replace('walkthrough.html');
+    return;
+  }
+  const section = ['#review', '#study'].includes(location.hash)
     ? location.hash
     : '#atlas';
   for (const link of $$('.nav-link')) {

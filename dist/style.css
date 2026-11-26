@@ -110,7 +110,6 @@ button:disabled {
   margin-inline: auto;
 }
 #atlas,
-#demo-film,
 #review,
 #study {
   scroll-margin-top: 18px;
@@ -321,20 +320,6 @@ button:disabled {
 .entrance-action:hover {
   background: #fff6e1;
 }
-.demo-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 1px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-.demo-link .icon {
-  color: var(--gold);
-}
-.demo-link:hover {
-  color: var(--starlight);
-}
 .pet-field {
   position: relative;
   isolation: isolate;
@@ -537,7 +522,12 @@ button:disabled {
 
 .demo-film {
   width: min(940px, calc(100% - 64px));
-  padding: 20px 0 clamp(35px, 6vw, 72px);
+  padding: clamp(24px, 5vw, 64px) 0;
+}
+.film-return {
+  display: inline-block;
+  margin-bottom: 24px;
+  color: var(--muted);
 }
 .film-heading {
   display: flex;
@@ -546,8 +536,9 @@ button:disabled {
   gap: 12px;
   margin-bottom: 12px;
 }
-.film-heading h2 {
-  font: 535 1.22rem / 1.4 var(--serif);
+.film-heading h1 {
+  margin: 0;
+  font: 535 clamp(1.5rem, 4vw, 2.3rem) / 1.4 var(--serif);
   color: var(--starlight);
 }
 .film-heading time {
@@ -564,6 +555,10 @@ button:disabled {
   border: 1px solid var(--strong-line);
   border-radius: 13px;
   box-shadow: 0 17px 62px #09090f9c;
+}
+.film-caption {
+  margin-top: 14px;
+  color: var(--muted);
 }
 
 .atlas-panel {

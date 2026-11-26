@@ -12,7 +12,7 @@
       name="description"
       content="把 ChatGPT 对话按主题整理成星图，随时回看原文。"
     />
-    <title>Memory Atlas · 对话星图</title>
+    <title>回声档案 · Memory Atlas</title>
     <link rel="icon" href="atlas.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="style.css" />
     <script type="module" src="app.js"></script>
@@ -92,7 +92,6 @@
           <a href="#atlas" class="nav-link active" aria-current="location"
             >星图</a
           >
-          <a href="#demo-film" class="nav-link">使用示例</a>
           <a href="#review" class="nav-link">回顾</a>
           <a href="#study" class="nav-link">复习</a>
         </nav>
@@ -121,16 +120,12 @@
     <main>
       <section class="entrance" aria-labelledby="hero-title">
         <div class="entrance-copy">
-          <h1 id="hero-title">对话星图</h1>
+          <h1 id="hero-title">回声档案</h1>
           <p>按主题整理 ChatGPT 对话，随时回看原文。</p>
           <div class="entrance-actions">
             <a class="button primary entrance-action" href="#atlas">
               <svg class="icon" aria-hidden="true"><use href="#i-atlas" /></svg>
               进入星图
-            </a>
-            <a class="demo-link" href="#demo-film">
-              <svg class="icon" aria-hidden="true"><use href="#i-play" /></svg>
-              看 42 秒示例
             </a>
           </div>
         </div>
@@ -238,35 +233,6 @@
           role="status"
         ></span>
       </section>
-      <section
-        id="demo-film"
-        class="page-shell demo-film"
-        aria-labelledby="demo-title"
-        tabindex="-1"
-      >
-        <div class="film-heading">
-          <h2 id="demo-title">使用示例</h2>
-          <time datetime="PT42S">0:42</time>
-        </div>
-        <video
-          controls
-          playsinline
-          preload="metadata"
-          width="1280"
-          height="720"
-          poster="media/atlas-walkthrough.webp"
-          aria-labelledby="demo-title"
-        >
-          <source src="media/atlas-walkthrough.mp4" type="video/mp4" />
-          <track
-            kind="captions"
-            src="media/atlas-walkthrough.zh.vtt"
-            srclang="zh-CN"
-            label="中文字幕"
-          />
-          <a href="media/atlas-walkthrough.mp4">下载使用示例</a>
-        </video>
-      </section>
       <div class="atlas-stage">
         <section
           id="atlas"
@@ -328,7 +294,7 @@
                     class="graph"
                     viewBox="0 0 900 514"
                     role="group"
-                    aria-label="对话星图"
+                    aria-label="对话主题图谱"
                   ></svg>
                   <div id="timeline" class="timeline" hidden></div>
                   <p id="graph-empty" class="graph-empty" hidden></p>
@@ -530,6 +496,7 @@
           <button type="submit" class="button primary" id="import-submit">
             导入并生成星图
           </button>
+          <a class="inline-link import-help" href="walkthrough.html">看导入演示</a>
           <a
             class="inline-link import-help"
             href="https://help.openai.com/en/articles/7260999-exporting-your-chatgpt-history-and-data"

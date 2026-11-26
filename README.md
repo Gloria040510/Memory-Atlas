@@ -1,4 +1,4 @@
-# Memory Atlas · 对话星图
+# Memory Atlas · 回声档案
 
 > 聊过的，隔一阵也能循着线索找回来。
 
@@ -10,7 +10,7 @@ Memory Atlas 把与 ChatGPT 的对话按主题组织起来。点开星图里的�
 
 [![Memory Atlas 短片封面，左侧是「从一份对话到一张星图」，右侧是点阵星图和三只小桌宠](dist/media/atlas-walkthrough.webp)](dist/media/atlas-walkthrough.mp4)
 
-短片用站内的 18 段示例对话演示文件导入、主题图谱、原文回看、对话回顾与复习卡。画面为流程动画，配有原创轻音乐和可选中文字幕。 [打开 MP4](dist/media/atlas-walkthrough.mp4)
+短片用站内的 18 段示例对话演示文件导入、主题图谱、原文回看、对话回顾与复习卡。画面为流程动画，配有原创轻音乐和可选中文字幕。也可以在站内打开「导入对话 → 看导入演示」。 [打开 MP4](dist/media/atlas-walkthrough.mp4)
 
 ## 从一颗星回到一句话
 
