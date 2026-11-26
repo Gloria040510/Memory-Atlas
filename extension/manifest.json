@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Memory Atlas · 对话采集",
+  "version": "1.0.0",
+  "description": "将你主动开启采集的 ChatGPT 对话同步到本地 Memory Atlas，生成知识图谱与学习回顾。",
+  "permissions": ["storage"],
+  "host_permissions": ["https://chatgpt.com/*", "https://memory-atlas-journal.sweet-pony-8082.chatgpt.site/*"],
+  "background": {"service_worker": "background.js"},
+  "action": {"default_popup": "popup.html", "default_title": "Memory Atlas"},
+  "content_scripts": [
+    {"matches": ["https://chatgpt.com/*"], "js": ["capture.js"], "run_at": "document_idle"},
+    {"matches": ["https://memory-atlas-journal.sweet-pony-8082.chatgpt.site/*"], "js": ["bridge.js"], "run_at": "document_idle"}
+  ]
+}

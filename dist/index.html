@@ -1,0 +1,681 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <meta name="theme-color" content="#111215" />
+    <meta
+      name="description"
+      content="把 ChatGPT 对话按主题整理成星图，随时回看原文。"
+    />
+    <title>Memory Atlas · 对话星图</title>
+    <link rel="icon" href="atlas.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="style.css" />
+    <script type="module" src="app.js"></script>
+  </head>
+  <body>
+    <svg
+      class="icon-library"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <symbol id="i-atlas" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.6" />
+        <ellipse
+          cx="12"
+          cy="12"
+          rx="4.3"
+          ry="8.6"
+          transform="rotate(39 12 12)"
+        />
+        <path d="M5 16.8 19 7.2M12 1v4m0 14v4M1 12h4m14 0h4" />
+      </symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24">
+        <path d="M12 16V4m-4 4 4-4 4 4M5 15v5h14v-5" />
+      </symbol>
+      <symbol id="i-search" viewBox="0 0 24 24">
+        <circle cx="10.8" cy="10.8" r="5.7" />
+        <path d="m15 15 4.5 4.5" />
+      </symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8" />
+        <path d="M12 8v4l2.5 2" />
+      </symbol>
+      <symbol id="i-map" viewBox="0 0 24 24">
+        <circle cx="12" cy="5" r="2.5" />
+        <circle cx="5" cy="17" r="2.5" />
+        <circle cx="19" cy="17" r="2.5" />
+        <path d="m10.7 7.4-4.4 7.2m7-7.2 4.4 7.2M7.5 17h9" />
+      </symbol>
+      <symbol id="i-list" viewBox="0 0 24 24">
+        <path d="M9 6h10M9 12h10M9 18h10M5 5h.01M5 12h.01M5 19h.01" />
+      </symbol>
+      <symbol id="i-lock" viewBox="0 0 24 24">
+        <rect x="6" y="10" width="12" height="10" rx="2" />
+        <path d="M8.5 10V7a3.5 3.5 0 0 1 7 0v3M12 14v2" />
+      </symbol>
+      <symbol id="i-play" viewBox="0 0 24 24">
+        <path d="m9 6 10 6-10 6z" />
+      </symbol>
+      <symbol id="i-pause" viewBox="0 0 24 24">
+        <path d="M9 5v14m6-14v14" />
+      </symbol>
+      <symbol id="i-reset" viewBox="0 0 24 24">
+        <path d="M9 4H4v5m11-5h5v5m-5 11h5v-5M9 20H4v-5" />
+        <circle cx="12" cy="12" r="2" />
+      </symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" />
+      </symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" /></symbol>
+      <symbol id="i-close" viewBox="0 0 24 24">
+        <path d="m6 6 12 12M6 18 18 6" />
+      </symbol>
+      <symbol id="i-book" viewBox="0 0 24 24">
+        <path
+          d="M12 6c-2-2-5-2-8-2v14c3 0 6 0 8 2 2-2 5-2 8-2V4c-3 0-6 0-8 2v14"
+        />
+      </symbol>
+    </svg>
+    <header class="site-header" id="top">
+      <div class="header-content">
+        <a href="#top" class="brand" aria-label="Memory Atlas 首页"
+          ><span class="brand-mark"
+            ><svg class="icon"><use href="#i-atlas" /></svg></span
+          ><span>Memory Atlas</span></a
+        >
+        <nav aria-label="主要导航">
+          <a href="#atlas" class="nav-link active" aria-current="location"
+            >星图</a
+          >
+          <a href="#demo-film" class="nav-link">使用示例</a>
+          <a href="#review" class="nav-link">回顾</a>
+          <a href="#study" class="nav-link">复习</a>
+        </nav>
+        <div class="header-actions">
+          <button
+            type="button"
+            class="privacy-link"
+            data-dialog="privacy-dialog"
+            aria-label="本地档案"
+            title="本地档案"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-lock" /></svg
+            ><span>本地档案</span>
+          </button>
+          <button
+            type="button"
+            class="button primary"
+            data-dialog="import-dialog"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-upload" /></svg
+            >导入对话
+          </button>
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="entrance" aria-labelledby="hero-title">
+        <div class="entrance-copy">
+          <h1 id="hero-title">对话星图</h1>
+          <p>按主题整理 ChatGPT 对话，随时回看原文。</p>
+          <div class="entrance-actions">
+            <a class="button primary entrance-action" href="#atlas">
+              <svg class="icon" aria-hidden="true"><use href="#i-atlas" /></svg>
+              进入星图
+            </a>
+            <a class="demo-link" href="#demo-film">
+              <svg class="icon" aria-hidden="true"><use href="#i-play" /></svg>
+              看 42 秒示例
+            </a>
+          </div>
+        </div>
+        <div
+          class="pet-field"
+          id="pet-field"
+          role="group"
+          aria-label="桌宠快捷入口"
+        >
+          <button
+            class="atlas-pet"
+            type="button"
+            data-pet="owl"
+            data-pet-topic
+            aria-controls="index-detail"
+            disabled
+          >
+            <img src="pets/owl.webp" width="100" height="100" alt="" />
+            <span class="pet-caption"></span>
+          </button>
+          <button
+            class="atlas-pet"
+            type="button"
+            data-pet="cat"
+            data-pet-topic
+            aria-controls="index-detail"
+            disabled
+          >
+            <img src="pets/cat.webp" width="100" height="100" alt="" />
+            <span class="pet-caption"></span>
+          </button>
+          <button
+            class="atlas-pet"
+            type="button"
+            data-pet="dragon"
+            data-pet-topic
+            aria-controls="index-detail"
+            disabled
+          >
+            <img src="pets/dragon.webp" width="100" height="100" alt="" />
+            <span class="pet-caption"></span>
+          </button>
+          <button
+            class="atlas-pet"
+            type="button"
+            data-pet="fox"
+            data-pet-topic
+            aria-controls="index-detail"
+            disabled
+          >
+            <img src="pets/fox.webp" width="100" height="100" alt="" />
+            <span class="pet-caption"></span>
+          </button>
+          <button
+            class="atlas-pet"
+            type="button"
+            data-pet="toad"
+            data-pet-topic
+            aria-controls="index-detail"
+            disabled
+          >
+            <img src="pets/toad.webp" width="100" height="100" alt="" />
+            <span class="pet-caption"></span>
+          </button>
+          <button
+            class="atlas-pet"
+            type="button"
+            data-pet="ghost"
+            id="pet-timeline"
+            aria-controls="timeline"
+            aria-pressed="false"
+          >
+            <img src="pets/ghost.webp" width="100" height="100" alt="" />
+            <span class="pet-caption">时间轴</span>
+          </button>
+          <button
+            class="atlas-pet"
+            type="button"
+            data-pet="bat"
+            id="pet-replay"
+            aria-controls="graph"
+            disabled
+          >
+            <img src="pets/bat.webp" width="100" height="100" alt="" />
+            <span class="pet-caption">按时间点亮</span>
+          </button>
+          <a class="atlas-pet" data-pet="moth" href="#review">
+            <img src="pets/moth.webp" width="100" height="100" alt="" />
+            <span class="pet-caption">对话回顾</span>
+          </a>
+          <button
+            class="pet-motion"
+            type="button"
+            id="pet-motion"
+            aria-label="暂停桌宠动画"
+            title="暂停桌宠动画"
+            aria-controls="pet-field"
+          >
+            <svg class="icon" aria-hidden="true"><use href="#i-pause" /></svg>
+          </button>
+        </div>
+        <span
+          id="pet-announcement"
+          class="visually-hidden"
+          role="status"
+        ></span>
+      </section>
+      <section
+        id="demo-film"
+        class="page-shell demo-film"
+        aria-labelledby="demo-title"
+        tabindex="-1"
+      >
+        <div class="film-heading">
+          <h2 id="demo-title">使用示例</h2>
+          <time datetime="PT42S">0:42</time>
+        </div>
+        <video
+          controls
+          playsinline
+          preload="metadata"
+          width="1280"
+          height="720"
+          poster="media/atlas-walkthrough.webp"
+          aria-labelledby="demo-title"
+        >
+          <source src="media/atlas-walkthrough.mp4" type="video/mp4" />
+          <track
+            kind="captions"
+            src="media/atlas-walkthrough.zh.vtt"
+            srclang="zh-CN"
+            label="中文字幕"
+          />
+          <a href="media/atlas-walkthrough.mp4">下载使用示例</a>
+        </video>
+      </section>
+      <div class="atlas-stage">
+        <section
+          id="atlas"
+          class="page-shell"
+          aria-label="星图工作区"
+          tabindex="-1"
+        >
+          <div class="atlas-panel">
+            <div class="toolbar">
+              <div class="toolbar-start">
+                <span class="dataset-label" id="sample-label">示例对话</span>
+                <select id="toggle-dataset" aria-label="选择对话档案" hidden>
+                  <option value="sample">示例对话</option>
+                  <option value="personal">我的对话</option>
+                </select>
+                <select id="atlas-month" aria-label="星图日期范围">
+                  <option value="30">近 30 天</option>
+                </select>
+                <select id="importance" aria-label="筛选节点">
+                  <option value="all">全部节点</option>
+                  <option value="core">常出现</option>
+                  <option value="open">待跟进</option>
+                </select>
+              </div>
+              <div class="tools">
+                <label class="search-box"
+                  ><svg class="icon" aria-hidden="true">
+                    <use href="#i-search" /></svg
+                  ><input
+                    id="search"
+                    type="search"
+                    placeholder="搜主题或关键词"
+                    aria-label="搜索星图"
+                    autocomplete="off"
+                /></label>
+                <div class="view-control" aria-label="切换视图">
+                  <button type="button" data-view="map" aria-pressed="true">
+                    <svg class="icon" aria-hidden="true">
+                      <use href="#i-map" /></svg
+                    >星图
+                  </button>
+                  <button
+                    type="button"
+                    data-view="timeline"
+                    aria-pressed="false"
+                  >
+                    <svg class="icon" aria-hidden="true">
+                      <use href="#i-list" /></svg
+                    >时间轴
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="atlas-grid">
+              <div class="chart">
+                <div class="plot" id="plot">
+                  <svg
+                    id="graph"
+                    class="graph"
+                    viewBox="0 0 900 514"
+                    role="group"
+                    aria-label="对话星图"
+                  ></svg>
+                  <div id="timeline" class="timeline" hidden></div>
+                  <p id="graph-empty" class="graph-empty" hidden></p>
+                  <div
+                    id="graph-tip"
+                    class="graph-tip"
+                    role="tooltip"
+                    hidden
+                  ></div>
+                  <div class="plot-actions" id="plot-actions">
+                    <button type="button" id="grow" class="grow-button">
+                      <svg class="icon" aria-hidden="true">
+                        <use href="#i-play" /></svg
+                      ><span>按时间点亮</span>
+                    </button>
+                    <div class="zoom-controls">
+                      <button
+                        type="button"
+                        data-zoom="minus"
+                        aria-label="缩小"
+                        title="缩小"
+                      >
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-minus" />
+                        </svg></button
+                      ><button
+                        type="button"
+                        data-zoom="reset"
+                        aria-label="重置视图"
+                        title="重置视图"
+                      >
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-reset" />
+                        </svg></button
+                      ><button
+                        type="button"
+                        data-zoom="plus"
+                        aria-label="放大"
+                        title="放大"
+                      >
+                        <svg class="icon" aria-hidden="true">
+                          <use href="#i-plus" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="atlas-foot">
+                  <div class="legend" id="legend" aria-label="节点图例">
+                    <span><i class="legend-topic"></i>主题</span
+                    ><span><i class="legend-concept"></i>知识点</span
+                    ><span><i class="legend-question"></i>问题</span
+                    ><span><i class="legend-memory"></i>对话</span>
+                  </div>
+                  <span id="atlas-date"></span>
+                </div>
+              </div>
+              <aside
+                class="atlas-index"
+                aria-labelledby="index-title"
+                id="atlas-index"
+              >
+                <div class="index-heading">
+                  <h2 id="index-title">主题</h2>
+                  <span id="index-count" aria-live="polite"></span>
+                </div>
+                <div id="topics"></div>
+                <div class="index-detail" id="index-detail" hidden></div>
+              </aside>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section
+        id="review"
+        class="page-shell review"
+        aria-labelledby="review-title"
+      >
+        <header class="section-head">
+          <h2 id="review-title">对话回顾</h2>
+          <div class="review-controls">
+            <select id="review-month" aria-label="回顾日期范围">
+              <option value="30">近 30 天</option>
+            </select>
+            <button type="button" class="button quiet" id="export-review">
+              导出
+            </button>
+            <button
+              type="button"
+              class="button quiet"
+              id="review-language"
+              aria-label="切换回顾语言"
+            >
+              EN
+            </button>
+          </div>
+        </header>
+        <div id="review-content"></div>
+        <details class="evidence">
+          <summary>原文摘录</summary>
+          <p class="muted">摘自 ChatGPT 的回答，未经核实。</p>
+          <div id="learning-evidence"></div>
+        </details>
+        <div class="reflection">
+          <h3>我的复盘</h3>
+          <p class="muted" id="reflection-hint" hidden>
+            导入自己的对话后可保存复盘。
+          </p>
+          <textarea
+            id="reflection-text"
+            rows="3"
+            maxlength="10000"
+            aria-label="我的复盘"
+            placeholder="记下这段时间的新发现…"
+          ></textarea
+          ><button type="button" class="button quiet" id="save-reflection">
+            保存复盘
+          </button>
+        </div>
+      </section>
+      <section
+        id="study"
+        class="page-shell study"
+        aria-labelledby="study-title"
+      >
+        <header class="section-head">
+          <h2 id="study-title">复习卡</h2>
+          <span id="study-count"></span>
+        </header>
+        <div id="study-list"></div>
+      </section>
+    </main>
+    <footer class="site-footer">
+      <div class="page-shell footer-content">
+        <a href="#top" class="brand"
+          ><span class="brand-mark"
+            ><svg class="icon"><use href="#i-atlas" /></svg></span
+          >Memory Atlas</a
+        >
+        <div class="footer-links">
+          <a href="memory-atlas-source.zip" download>下载项目源码</a
+          ><button
+            type="button"
+            class="privacy-link"
+            data-dialog="privacy-dialog"
+          >
+            <svg class="icon"><use href="#i-lock" /></svg>数据与隐私
+          </button>
+        </div>
+      </div>
+    </footer>
+
+    <dialog id="import-dialog" aria-labelledby="import-title">
+      <form id="import-form" class="dialog-body">
+        <button
+          class="icon-button close-dialog"
+          type="button"
+          aria-label="关闭"
+        >
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+        <h2 id="import-title">导入对话</h2>
+        <div class="period-control import-tabs" aria-label="导入方式">
+          <button type="button" data-import-mode="file" aria-pressed="true">
+            选择文件</button
+          ><button type="button" data-import-mode="paste" aria-pressed="false">
+            粘贴文本
+          </button>
+        </div>
+        <label id="drop-zone" class="drop-zone"
+          ><input
+            id="file-input"
+            type="file"
+            accept=".zip,.json,.html,.htm,.txt,.md,.markdown"
+            multiple
+          /><svg class="icon"><use href="#i-upload" /></svg
+          ><strong id="file-title">选择文件，或拖到这里</strong
+          ><span>ZIP、JSON、HTML、TXT、Markdown</span></label
+        >
+        <label id="paste-zone" class="paste-zone" hidden
+          ><span>对话文本</span
+          ><textarea
+            id="paste-input"
+            rows="7"
+            placeholder="你：我该怎么理解久期？&#10;ChatGPT：久期衡量债券价格对利率变动的敏感度。"
+          ></textarea>
+        </label>
+        <label class="paste-date" id="paste-date-zone" hidden
+          >对话日期 <input type="date" id="paste-date"
+        /></label>
+        <label class="retention"
+          ><input type="checkbox" id="retain-text" checked /><span
+            >保留对话原文<small>关闭后只存主题、关键词和来源索引。</small></span
+          ></label
+        >
+        <p class="form-message" id="import-message" role="status"></p>
+        <div class="dialog-actions import-actions">
+          <button type="submit" class="button primary" id="import-submit">
+            导入并生成星图
+          </button>
+          <a
+            class="inline-link import-help"
+            href="https://help.openai.com/en/articles/7260999-exporting-your-chatgpt-history-and-data"
+            target="_blank"
+            rel="noopener"
+            >如何导出 ChatGPT 对话</a
+          >
+        </div>
+      </form>
+    </dialog>
+    <dialog id="privacy-dialog" aria-labelledby="privacy-title">
+      <div class="dialog-body">
+        <button
+          class="icon-button close-dialog"
+          type="button"
+          aria-label="关闭"
+        >
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+        <h2 id="privacy-title">本地档案</h2>
+        <p>对话保存在此浏览器。清理浏览器数据或换设备前，可下载备份。</p>
+        <div id="privacy-summary" class="privacy-summary"></div>
+        <details class="methods">
+          <summary>查看聚类对照</summary>
+          <div id="method-details"></div>
+        </details>
+        <div class="dialog-actions">
+          <button type="button" class="button primary" id="archive-open">
+            管理对话与备份</button
+          ><button type="button" class="button quiet" id="export-graph">
+            导出星图</button
+          ><button type="button" class="button quiet" data-dialog="sync-dialog">
+            设置实时同步</button
+          ><button type="button" class="button danger" id="clear-data">
+            清除本地数据
+          </button>
+        </div>
+        <div id="clear-confirm" hidden>
+          <p>将删除所有已导入的对话、索引和手动编辑。</p>
+          <button type="button" class="button danger" id="confirm-clear">
+            确认清除
+          </button>
+          <button type="button" class="button quiet" id="cancel-clear">
+            取消
+          </button>
+        </div>
+        <p class="form-message" id="privacy-message" role="status"></p>
+      </div>
+    </dialog>
+    <dialog id="source-dialog" aria-labelledby="source-title">
+      <article class="dialog-body">
+        <button
+          class="icon-button close-dialog"
+          type="button"
+          aria-label="关闭"
+        >
+          <svg class="icon"><use href="#i-close" /></svg>
+        </button>
+        <h2 id="source-title"></h2>
+        <p class="source-date" id="source-date"></p>
+        <div id="source-turns"></div>
+      </article>
+    </dialog>
+    <dialog id="archive-dialog" aria-labelledby="archive-title">
+      <div class="dialog-body">
+        <button
+          type="button"
+          class="icon-button close-dialog"
+          aria-label="关闭"
+        >
+          ×
+        </button>
+        <h2 id="archive-title">对话与备份</h2>
+        <div class="archive-tools">
+          <input
+            id="archive-search"
+            type="search"
+            placeholder="搜索标题和原文"
+            aria-label="搜索对话原文"
+          /><button class="button quiet" id="archive-trash">回收站</button>
+        </div>
+        <p id="archive-count" class="muted"></p>
+        <div id="archive-list"></div>
+        <div class="dialog-actions">
+          <button id="archive-prev" class="button quiet">上一页</button
+          ><button id="archive-next" class="button quiet">下一页</button>
+        </div>
+        <hr />
+        <h3>备份与迁移</h3>
+        <p class="muted">备份包含原文、笔记和复习记录。</p>
+        <div class="dialog-actions">
+          <button class="button primary" id="backup-export">下载备份</button
+          ><label class="button quiet"
+            >恢复备份<input
+              id="backup-file"
+              type="file"
+              accept=".json"
+              class="visually-hidden"
+          /></label>
+        </div>
+        <div id="restore-actions" hidden>
+          <p id="restore-message"></p>
+          <button class="button danger" id="restore-confirm">
+            替换当前档案</button
+          ><button class="button quiet" id="restore-cancel">取消</button>
+        </div>
+      </div>
+    </dialog>
+    <dialog id="sync-dialog" aria-labelledby="sync-title">
+      <div class="dialog-body">
+        <button
+          type="button"
+          class="icon-button close-dialog"
+          aria-label="关闭"
+        >
+          ×
+        </button>
+        <h2 id="sync-title">实时同步</h2>
+        <p>用 Chrome 或 Edge 扩展，把手动开启的 ChatGPT 对话同步到本地档案。</p>
+        <ol class="sync-steps">
+          <li>
+            <a href="memory-atlas-extension.zip" download class="inline-link"
+              >下载浏览器扩展</a
+            >并解压。
+          </li>
+          <li>在扩展管理页开启开发者模式，选择「加载已解压的扩展程序」。</li>
+          <li>
+            刷新 ChatGPT，在扩展里选择「开启当前对话」。保留本页面，并开启接收。
+          </li>
+        </ol>
+        <label class="retention"
+          ><input type="checkbox" id="sync-enabled" /><span
+            >允许此浏览器接收对话</span
+          ></label
+        >
+        <p id="sync-status" class="form-message"></p>
+        <details class="methods">
+          <summary>同步范围与暂停</summary>
+          <p>扩展只采集已加载的文字。首次采集日期可在原文页修改。</p>
+          <p>
+            页面关闭时，扩展最多暂存 20
+            段待传对话，重新打开后补传。在扩展里暂停该对话可清除它的待传内容。
+          </p>
+        </details>
+      </div>
+    </dialog>
+    <div class="toast" id="toast" role="status" hidden></div>
+  </body>
+</html>
