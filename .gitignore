@@ -1,0 +1,9 @@
+node_modules/
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+.env*
+conversations*.json
+chat.html
+.DS_Store
